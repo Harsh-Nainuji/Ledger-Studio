@@ -1,0 +1,122 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-ledger-cream: #f5f1ed;
+  --color-ledger-paper: #ece8e3;
+  --color-ledger-text: #2c2a28;
+  --color-ledger-accent: #d4a574;
+  --color-ledger-oxblood: #8b4513;
+  --color-ledger-grey: #9b8f88;
+  --color-ledger-warm: #e8dfd8;
+  --color-ledger-dark: #1a1918;
+  --radius: 0px;
+  --font-newsreader: Georgia, 'Times New Roman', Times, serif;
+  --font-jetbrains: 'Courier New', Courier, monospace;
+}
+
+:root {
+  color-scheme: light;
+  --ledger-cream: #f5f1ed;
+  --ledger-paper: #ece8e3;
+  --ledger-text: #2c2a28;
+  --ledger-accent: #d4a574;
+  --ledger-oxblood: #8b4513;
+  --ledger-grey: #9b8f88;
+  --ledger-warm: #e8dfd8;
+  --ledger-dark: #1a1918;
+}
+
+@layer base {
+  body {
+    @apply bg-ledger-cream text-ledger-text;
+  }
+  button, a {
+    @apply transition-all duration-300 ease-out;
+  }
+  input, textarea, select {
+    @apply transition-colors duration-300 ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+@layer components {
+  .markdown-preview p {
+    margin-bottom: 0.5rem;
+  }
+  .markdown-preview p:last-child {
+    margin-bottom: 0;
+  }
+  .markdown-preview ul {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .markdown-preview ol {
+    list-style-type: decimal;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .markdown-preview ul:last-child,
+  .markdown-preview ol:last-child {
+    margin-bottom: 0;
+  }
+  .markdown-preview li {
+    margin-bottom: 0.25rem;
+  }
+  .markdown-preview strong {
+    font-weight: 700;
+  }
+  .markdown-preview em {
+    font-style: italic;
+  }
+  .markdown-preview u {
+    text-decoration: underline;
+  }
+  .markdown-preview .markdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0.5rem;
+  }
+  .markdown-preview .markdown-table th,
+  .markdown-preview .markdown-table td {
+    border: 1px solid #2c2a28;
+    padding: 0.5rem;
+    text-align: left;
+    font-size: 0.875rem;
+  }
+  .markdown-preview .markdown-table th {
+    background: #e8dfd8;
+    font-weight: 700;
+  }
+}

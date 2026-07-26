@@ -9,11 +9,13 @@ import { validateMilestones } from '@/lib/validateMilestones';
 interface PreviewExportButtonProps {
   quote: QuoteData;
   senderInfo: SenderInfo;
+  className?: string;
 }
 
 export default function PreviewExportButton({
   quote,
   senderInfo,
+  className = '',
 }: PreviewExportButtonProps) {
   const [loading, setLoading] = useState(false);
 
@@ -58,7 +60,7 @@ export default function PreviewExportButton({
       type="button"
       onClick={handleDownload}
       disabled={loading}
-      className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-text px-5 py-3 hover:bg-ledger-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className={`font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-text px-5 py-3 hover:bg-ledger-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       {loading ? 'Generating PDF...' : 'Download PDF'}
     </button>

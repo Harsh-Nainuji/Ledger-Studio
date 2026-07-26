@@ -1,7 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { QuoteData, SenderInfo } from '@/lib/types';
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import { pdf } from '@react-pdf/renderer';
 import PDFDocument from './pdf-document';
 import { validateMilestones } from '@/lib/validateMilestones';
 
@@ -14,7 +15,8 @@ export default function PreviewExportButton({
   quote,
   senderInfo,
 }: PreviewExportButtonProps) {
-  // Quick validation
+  const [loading, setLoading] = useState(false);
+
   const hasClient = quote.clientInfo.name;
   const hasItems = quote.lineItems.length > 0;
   const milestonesValid = !quote.paymentScheduleEnabled || validateMilestones(quote.milestones).isValid;
@@ -32,15 +34,33 @@ export default function PreviewExportButton({
     );
   }
 
+  const handleDownload = async () => {
+    setLoading(true);
+    try {
+      const blob = await pdf(<PDFDocument quote={quote} senderInfo={senderInfo} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      console.error('Failed to generate PDF:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <PDFDownloadLink
-      document={<PDFDocument quote={quote} senderInfo={senderInfo} />}
-      fileName={filename}
-      className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-text px-5 py-3 hover:bg-ledger-dark transition-colors"
+    <button
+      type="button"
+      onClick={handleDownload}
+      disabled={loading}
+      className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-text px-5 py-3 hover:bg-ledger-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {({ loading }) =>
-        loading ? 'Generating PDF...' : 'Download PDF'
-      }
-    </PDFDownloadLink>
+      {loading ? 'Generating PDF...' : 'Download PDF'}
+    </button>
   );
 }

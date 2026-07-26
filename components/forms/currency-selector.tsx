@@ -44,7 +44,8 @@ export default function CurrencySelector({
       </select>
       <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-ledger-grey flex items-center transition-opacity duration-300">
         <RoundFlag flag={current.flag} />
-        {current.flag} {current.name}
+        <span className="hidden sm:inline">{current.flag}</span>
+        {current.name}
       </p>
     </div>
   );

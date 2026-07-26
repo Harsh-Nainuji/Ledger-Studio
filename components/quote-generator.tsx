@@ -270,7 +270,9 @@ export default function QuoteGenerator() {
         <section className="mb-10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
             <h2 className="font-serif text-2xl text-ledger-text">Document Preview</h2>
-            <PreviewExportButton quote={quote} senderInfo={senderInfo} />
+            <div className="w-full md:w-auto">
+              <PreviewExportButton quote={quote} senderInfo={senderInfo} />
+            </div>
           </div>
           <LivePreview
             quote={quote}

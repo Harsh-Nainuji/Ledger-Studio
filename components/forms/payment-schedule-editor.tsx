@@ -86,7 +86,7 @@ export default function PaymentScheduleEditor({
         >
           <div
             className={`absolute top-[2px] w-[18px] h-[18px] bg-ledger-cream border border-ledger-text transition-transform ${
-              enabled ? 'left-[24px]' : 'left-[2px]'
+              enabled ? 'left-[26px]' : 'left-[4px]'
             }`}
           />
         </button>

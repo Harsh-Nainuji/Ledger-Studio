@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { QuoteData, SenderInfo } from '@/lib/types';
-import { pdf } from '@react-pdf/renderer';
-import PDFDocument from './pdf-document';
 import { validateMilestones } from '@/lib/validateMilestones';
 
 interface PreviewExportButtonProps {
@@ -18,6 +16,11 @@ export default function PreviewExportButton({
   className = '',
 }: PreviewExportButtonProps) {
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const hasClient = quote.clientInfo.name;
   const hasItems = quote.lineItems.length > 0;
@@ -37,8 +40,14 @@ export default function PreviewExportButton({
   }
 
   const handleDownload = async () => {
+    if (!mounted) return;
     setLoading(true);
     try {
+      // Dynamically import to avoid SSR/mobile rendering issues
+      const [{ pdf }, { default: PDFDocument }] = await Promise.all([
+        import('@react-pdf/renderer'),
+        import('./pdf-document'),
+      ]);
       const blob = await pdf(<PDFDocument quote={quote} senderInfo={senderInfo} />).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');

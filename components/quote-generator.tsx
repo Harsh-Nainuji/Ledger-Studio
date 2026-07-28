@@ -282,11 +282,11 @@ export default function QuoteGenerator() {
             minimumHourlyRate={quote.minimumHourlyRate}
             currencyCode={quote.currencyCode}
           />
-          <div className="mt-6 flex md:hidden">
+          <div className="mt-6 md:hidden">
             <PreviewExportButton
               quote={quote}
               senderInfo={senderInfo}
-              className="w-full text-center block"
+              className="w-full text-center"
             />
           </div>
         </section>

@@ -44,11 +44,10 @@ export default function PreviewExportButton({
     setLoading(true);
     try {
       // Dynamically import to avoid SSR/mobile rendering issues
-      const [{ pdf }, { default: PDFDocument }] = await Promise.all([
-        import('@react-pdf/renderer'),
-        import('./pdf-document'),
-      ]);
-      const blob = await pdf(<PDFDocument quote={quote} senderInfo={senderInfo} />).toBlob();
+      const { pdf, createElement } = await import('@react-pdf/renderer');
+      const { default: PDFDocument } = await import('./pdf-document');
+      const element = createElement(PDFDocument, { quote, senderInfo });
+      const blob = await pdf(element).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;

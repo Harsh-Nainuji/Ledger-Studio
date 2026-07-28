@@ -28,7 +28,7 @@ export default function PreviewExportButton({
 
   if (!isValid) {
     return (
-      <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-ledger-oxblood space-y-1">
+      <div className={`font-mono text-[10px] uppercase tracking-[0.08em] text-ledger-oxblood space-y-1 ${className}`}>
         {!hasClient && <div>Add client name</div>}
         {!hasItems && <div>Add line items</div>}
         {!milestonesValid && <div>Fix payment schedule allocation</div>}
@@ -41,13 +41,22 @@ export default function PreviewExportButton({
     try {
       const blob = await pdf(<PDFDocument quote={quote} senderInfo={senderInfo} />).toBlob();
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      // iOS Safari doesn't support the download attribute on anchor clicks —
+      // opening in a new tab is the reliable cross-platform fallback.
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      } else {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
     } catch (error) {
       console.error('Failed to generate PDF:', error);
     } finally {

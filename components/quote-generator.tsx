@@ -286,7 +286,7 @@ export default function QuoteGenerator() {
             <PreviewExportButton
               quote={quote}
               senderInfo={senderInfo}
-              className="w-full text-center"
+              className="block w-full text-center"
             />
           </div>
         </section>

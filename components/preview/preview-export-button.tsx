@@ -26,16 +26,6 @@ export default function PreviewExportButton({
 
   const filename = `quote-${quote.quoteNumber}.pdf`;
 
-  if (!isValid) {
-    return (
-      <div className={`font-mono text-[10px] uppercase tracking-[0.08em] text-ledger-oxblood space-y-1 ${className}`}>
-        {!hasClient && <div>Add client name</div>}
-        {!hasItems && <div>Add line items</div>}
-        {!milestonesValid && <div>Fix payment schedule allocation</div>}
-      </div>
-    );
-  }
-
   const handleDownload = async () => {
     setLoading(true);
     try {
@@ -65,13 +55,24 @@ export default function PreviewExportButton({
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleDownload}
-      disabled={loading}
-      className={`font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-text px-5 py-3 hover:bg-ledger-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
-    >
-      {loading ? 'Generating PDF...' : 'Download PDF'}
-    </button>
+    <div className={className}>
+      <div className="flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={handleDownload}
+          disabled={loading || !isValid}
+          className={`font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-text px-5 py-3 hover:bg-ledger-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full`}
+        >
+          {loading ? 'Generating PDF...' : 'Download PDF'}
+        </button>
+        {!isValid && (
+          <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-ledger-oxblood space-y-1 text-center md:text-right">
+            {!hasClient && <div>* Add client name</div>}
+            {!hasItems && <div>* Add line items</div>}
+            {!milestonesValid && <div>* Fix payment schedule</div>}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

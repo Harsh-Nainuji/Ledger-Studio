@@ -58,3 +58,65 @@ export interface LineItemPreset {
   description: string;
   rate: number;
 }
+
+export type HiddenWorkStatus = 'detected' | 'added_to_scope' | 'internal_task' | 'ignored';
+
+export interface HiddenWorkItem {
+  id: string;
+  title: string;
+  description: string;
+  category: 'testing' | 'deployment' | 'configuration' | 'seo_analytics' | 'revisions' | 'security' | 'general';
+  estimatedHours: number;
+  suggestedRate: number;
+  status: HiddenWorkStatus;
+}
+
+export type DiagnosticSeverity = 'critical' | 'warning' | 'suggestion' | 'strong';
+
+export interface XRayDiagnostic {
+  id: string;
+  category: 'scope' | 'revisions' | 'payment' | 'timeline' | 'responsibilities' | 'supporting_work' | 'pricing';
+  severity: DiagnosticSeverity;
+  title: string;
+  message: string;
+  whyItMatters: string;
+  fixActionLabel?: string;
+  fixTargetSection?: string;
+}
+
+export type ScopeCreepDecisionType = 'accept' | 'charge' | 'reduce' | 'reject';
+
+export interface ScopeCreepScenario {
+  id: string;
+  clientMessage: string;
+  requestTitle: string;
+  requestDescription: string;
+  addedHours: number;
+  suggestedExtraCost: number;
+  category: string;
+  impactNote: string;
+}
+
+export interface ScopeCreepDecision {
+  scenarioId: string;
+  decision: ScopeCreepDecisionType;
+  hoursAdded: number;
+  priceAdded: number;
+  timestamp: string;
+}
+
+export interface GamificationAchievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+  unlockedAt?: string;
+}
+
+export interface GamificationStats {
+  xp: number;
+  level: number;
+  achievements: GamificationAchievement[];
+}
+

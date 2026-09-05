@@ -2,25 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { QuoteData, SenderInfo, ClientInfo, FreelancerSettings } from '@/lib/types';
-import { createEmptyQuote } from '@/lib/quote-utils';
-import SenderInfoForm from './forms/sender-info-form';
-import ClientInfoForm from './forms/client-info-form';
-import LineItemsEditor from './forms/line-items-editor';
-import TaxAndDiscountEditor from './forms/tax-discount-editor';
-import QuoteMetadataEditor from './forms/quote-metadata-editor';
-import ScopeOfWorkEditor from './forms/scope-of-work-editor';
-import PrivateRatePanel from './forms/private-rate-panel';
-import CurrencySelector from './forms/currency-selector';
-import PaymentScheduleEditor from './forms/payment-schedule-editor';
-import FreelancerBaselinePanel from './forms/freelancer-baseline-panel';
-import LivePreview from './preview/live-preview';
-import PreviewExportButton from './preview/preview-export-button';
-import DataAudit from './data-audit';
-import HowItWorks from './how-it-works';
-import WelcomeScreen from './welcome-screen';
-import Footer from './footer';
-import { calculateGrandTotal } from '@/lib/quote-utils';
+import { createEmptyQuote, calculateGrandTotal } from '@/lib/quote-utils';
 import { validateMilestones } from '@/lib/validateMilestones';
+import Navbar, { ViewMode } from './navigation/navbar';
+import DashboardView from './views/dashboard-view';
+import QuoteWorkspaceView from './views/quote-workspace-view';
+import ProjectsView from './views/projects-view';
+import DealLabHub from './deal-lab/deal-lab-hub';
+import PlaybookView from './views/playbook-view';
+import ProfileView from './views/profile-view';
+import WelcomeScreen from './welcome-screen';
+import DataAudit from './data-audit';
+import Footer from './footer';
 
 const DEFAULT_FREELANCER_SETTINGS: FreelancerSettings = {
   monthlySurvivalExpense: 4000,
@@ -28,6 +21,9 @@ const DEFAULT_FREELANCER_SETTINGS: FreelancerSettings = {
 };
 
 export default function QuoteGenerator() {
+  const [currentView, setCurrentView] = useState<ViewMode>('dashboard');
+  const [dealLabTab, setDealLabTab] = useState<'hidden-work' | 'xray' | 'simulator'>('hidden-work');
+
   const [quote, setQuote] = useState<QuoteData | null>(null);
   const [senderInfo, setSenderInfo] = useState<SenderInfo | null>(null);
   const [showNewQuoteConfirm, setShowNewQuoteConfirm] = useState(false);
@@ -123,6 +119,7 @@ export default function QuoteGenerator() {
     }
     setQuote(newQuote);
     setShowNewQuoteConfirm(false);
+    setCurrentView('quotes');
   };
 
   const updateQuote = (updates: Partial<QuoteData>) => {
@@ -154,165 +151,110 @@ export default function QuoteGenerator() {
     }
   };
 
+  const handleOpenDealLabTab = (tab: 'hidden-work' | 'xray' | 'simulator') => {
+    setDealLabTab(tab);
+    setCurrentView('deal-lab');
+  };
+
+  const handleNavigateToSection = (sectionId: string) => {
+    setCurrentView('quotes');
+    setTimeout(() => {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   if (!quote || !senderInfo) {
-    return <div className="font-mono text-sm text-ledger-text text-center py-20">Loading...</div>;
+    return <div className="font-mono text-sm text-ledger-text text-center py-20">Loading Ledger Studio...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-ledger-cream">
-      <WelcomeScreen />
-      <main className="max-w-4xl mx-auto px-4 md:px-6 py-10 md:py-16">
-        <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
-          <div className="flex items-center gap-4">
-            <img src="/logo.png" alt="Ledger Studio Logo" className="h-12 w-auto" />
-            <div>
-              <h1 className="font-serif text-4xl md:text-6xl text-ledger-text tracking-tight">
-                Ledger Studio
-              </h1>
-              <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-ledger-grey mt-2">
-                Editorial Quotation System
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowNewQuoteConfirm(true)}
-            className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-text px-5 py-3 hover:bg-ledger-dark transition-colors self-start"
-          >
-            New Document
-          </button>
-        </header>
+    <div className="min-h-screen bg-ledger-cream flex flex-col justify-between">
+      <div>
+        <WelcomeScreen />
 
-        <section className="mb-10">
-          <QuoteMetadataEditor quote={quote} onUpdate={updateQuote} />
-          <div className="mt-6 max-w-xs">
-            <CurrencySelector
-              currencyCode={quote.currencyCode}
-              onChange={(currencyCode) => updateQuote({ currencyCode })}
-            />
-          </div>
-        </section>
+        {/* Master Navigation Bar Shell */}
+        <Navbar
+          currentView={currentView}
+          onSelectView={setCurrentView}
+          onNewDocument={() => setShowNewQuoteConfirm(true)}
+        />
 
-        <hr className="border-ledger-text my-8" />
-
-        <section className="mb-10">
-          <h2 className="font-serif text-2xl text-ledger-text mb-6">Parties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            <SenderInfoForm senderInfo={senderInfo} onUpdate={updateSenderInfo} />
-            <ClientInfoForm clientInfo={quote.clientInfo} onUpdate={updateClientInfo} />
-          </div>
-        </section>
-
-        <hr className="border-ledger-text my-8" />
-
-        <section className="mb-10">
-          <h2 className="font-serif text-2xl text-ledger-text mb-6">Services & Pricing</h2>
-          <LineItemsEditor
-            lineItems={quote.lineItems}
-            onUpdate={(lineItems) => updateQuote({ lineItems })}
-            minimumHourlyRate={quote.minimumHourlyRate}
-            currencyCode={quote.currencyCode}
-            grandTotal={grandTotal}
-            onScopeUpdate={(scopeOfWork: string) => updateQuote({ scopeOfWork })}
-          />
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            <TaxAndDiscountEditor
-              taxRate={quote.taxRate}
-              discountAmount={quote.discountAmount}
-              onTaxUpdate={(taxRate) => updateQuote({ taxRate })}
-              onDiscountUpdate={(discountAmount) => updateQuote({ discountAmount })}
-              currencyCode={quote.currencyCode}
-            />
-            <PrivateRatePanel
-              minimumHourlyRate={quote.minimumHourlyRate}
-              onUpdate={(minimumHourlyRate) => updateQuote({ minimumHourlyRate })}
-              lineItems={quote.lineItems}
-              currencyCode={quote.currencyCode}
-            />
-          </div>
-          <div className="mt-8">
-            <FreelancerBaselinePanel
-              settings={freelancerSettings}
-              onUpdate={setFreelancerSettings}
-              onApply={applyBaselineRate}
-              calculatedRate={calculatedMinimumRate}
-            />
-          </div>
-        </section>
-
-        <hr className="border-ledger-text my-8" />
-
-        <section className="mb-10">
-          <h2 className="font-serif text-2xl text-ledger-text mb-6">Payment Schedule</h2>
-          <PaymentScheduleEditor
-            enabled={quote.paymentScheduleEnabled}
-            onToggle={(paymentScheduleEnabled) => updateQuote({ paymentScheduleEnabled })}
-            milestones={quote.milestones}
-            onUpdate={(milestones) => updateQuote({ milestones })}
-            grandTotal={grandTotal}
-            currencyCode={quote.currencyCode}
-          />
-        </section>
-
-        <hr className="border-ledger-text my-8" />
-
-        <section className="mb-10">
-          <h2 className="font-serif text-2xl text-ledger-text mb-6">Scope & Terms</h2>
-          <ScopeOfWorkEditor
-            scopeOfWork={quote.scopeOfWork}
-            notesAndTerms={quote.notesAndTerms}
-            onScopeUpdate={(scopeOfWork) => updateQuote({ scopeOfWork })}
-            onNotesUpdate={(notesAndTerms) => updateQuote({ notesAndTerms })}
-          />
-        </section>
-
-        <hr className="border-ledger-text my-8" />
-
-        <section className="mb-10">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
-            <h2 className="font-serif text-2xl text-ledger-text">Document Preview</h2>
-            <div className="hidden md:block w-full md:w-auto">
-              <PreviewExportButton quote={quote} senderInfo={senderInfo} />
-            </div>
-          </div>
-          <LivePreview
-            quote={quote}
-            senderInfo={senderInfo}
-            milestonesValid={milestonesValid}
-            effectiveHourlyRate={effectiveHourlyRate}
-            minimumHourlyRate={quote.minimumHourlyRate}
-            currencyCode={quote.currencyCode}
-          />
-          <div className="mt-6 md:hidden">
-            <PreviewExportButton
+        {/* Dynamic View Main Container */}
+        <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
+          {currentView === 'dashboard' && (
+            <DashboardView
               quote={quote}
               senderInfo={senderInfo}
-              className="block w-full text-center"
+              onNavigate={setCurrentView}
+              onNewDocument={() => setShowNewQuoteConfirm(true)}
             />
-          </div>
-        </section>
-      </main>
+          )}
 
+          {currentView === 'quotes' && (
+            <QuoteWorkspaceView
+              quote={quote}
+              senderInfo={senderInfo}
+              freelancerSettings={freelancerSettings}
+              grandTotal={grandTotal}
+              milestonesValid={milestonesValid}
+              effectiveHourlyRate={effectiveHourlyRate}
+              calculatedMinimumRate={calculatedMinimumRate}
+              onUpdateQuote={updateQuote}
+              onUpdateSenderInfo={updateSenderInfo}
+              onUpdateClientInfo={updateClientInfo}
+              onUpdateFreelancerSettings={setFreelancerSettings}
+              onApplyBaselineRate={applyBaselineRate}
+              onOpenDealLabTab={handleOpenDealLabTab}
+            />
+          )}
+
+          {currentView === 'projects' && <ProjectsView />}
+
+          {currentView === 'deal-lab' && (
+            <DealLabHub
+              quote={quote}
+              onUpdateQuote={updateQuote}
+              onNavigateToSection={handleNavigateToSection}
+            />
+          )}
+
+          {currentView === 'playbook' && (
+            <PlaybookView
+              quote={quote}
+              onUpdateQuote={updateQuote}
+              onNavigateToQuotes={() => setCurrentView('quotes')}
+            />
+          )}
+
+          {currentView === 'profile' && <ProfileView quote={quote} />}
+        </main>
+      </div>
+
+      {/* Confirmation Dialog for New Document */}
       {showNewQuoteConfirm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
-          <div className="bg-ledger-cream border border-ledger-text p-6 max-w-sm w-full">
-            <h2 className="font-serif text-xl text-ledger-text mb-4">
-              Clear current document?
-            </h2>
-            <p className="font-mono text-xs text-ledger-grey mb-6">
-              This will clear all quote data and start fresh. Your sender information will be preserved.
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4 animate-fade-in">
+          <div className="bg-ledger-cream border-2 border-ledger-text p-6 max-w-sm w-full space-y-4">
+            <h3 className="font-serif text-xl text-ledger-text font-bold">
+              Start new quote document?
+            </h3>
+            <p className="font-mono text-xs text-ledger-grey">
+              This will reset current line items and quote numbers. Sender info will be preserved.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-3 pt-2">
               <button
                 onClick={() => setShowNewQuoteConfirm(false)}
-                className="font-mono text-[10px] uppercase tracking-[0.1em] px-4 py-2 border border-ledger-text text-ledger-text hover:bg-ledger-warm transition-colors"
+                className="font-mono text-[10px] uppercase tracking-[0.1em] px-4 py-2.5 border border-ledger-text text-ledger-text hover:bg-ledger-warm transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleNewQuote}
-                className="font-mono text-[10px] uppercase tracking-[0.1em] px-4 py-2 bg-ledger-oxblood text-ledger-cream hover:bg-ledger-dark transition-colors"
+                className="font-mono text-[10px] uppercase tracking-[0.1em] px-4 py-2.5 bg-ledger-oxblood text-ledger-cream hover:bg-ledger-dark transition-colors border border-ledger-text"
               >
-                Clear Document
+                Clear & Start Fresh
               </button>
             </div>
           </div>
@@ -320,7 +262,6 @@ export default function QuoteGenerator() {
       )}
 
       <DataAudit />
-      <HowItWorks />
       <Footer />
     </div>
   );

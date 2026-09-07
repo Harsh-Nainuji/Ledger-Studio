@@ -1,20 +1,24 @@
-"use client"
+'use client';
 
 import React, { useEffect, useState } from "react"
 import { useTour } from "./tour-context"
+import { TOUR_STEPS } from "./tour-config"
 import { X, ChevronRight, ChevronLeft } from "lucide-react"
 
 export function TourPanel() {
   const { isActive, currentStep, currentStepIndex, nextStep, prevStep, skipTour } = useTour()
   const [position, setPosition] = useState({ top: 0, left: 0, opacity: 0 })
-  const totalSteps = 10 // Based on our config
+  const totalSteps = TOUR_STEPS.length
 
   useEffect(() => {
     if (!isActive || !currentStep) return
 
+    let timer: ReturnType<typeof setTimeout>
+    let scrollTimer: ReturnType<typeof setTimeout>
+    let attempts = 0
+
     const updatePosition = () => {
       if (currentStep.targetSelector === "body" || currentStep.placement === "center") {
-        // Center position
         setPosition({
           top: window.innerHeight / 2,
           left: window.innerWidth / 2,
@@ -26,9 +30,9 @@ export function TourPanel() {
       const el = document.querySelector(currentStep.targetSelector)
       if (el) {
         const rect = el.getBoundingClientRect()
-        const panelWidth = 320 // approximate width
-        const panelHeight = 200 // approximate height
-        const gap = 16
+        const panelWidth = 340
+        const panelHeight = 220
+        const gap = 20
 
         let top = rect.top + rect.height / 2
         let left = rect.left + rect.width / 2
@@ -53,15 +57,50 @@ export function TourPanel() {
         }
 
         // Boundary checks to keep it on screen
-        const padding = 16
+        const padding = 20
         if (left < panelWidth / 2 + padding) left = panelWidth / 2 + padding
         if (left > window.innerWidth - panelWidth / 2 - padding) left = window.innerWidth - panelWidth / 2 - padding
         if (top < panelHeight / 2 + padding) top = panelHeight / 2 + padding
         if (top > window.innerHeight - panelHeight / 2 - padding) top = window.innerHeight - panelHeight / 2 - padding
 
         setPosition({ top, left, opacity: 1 })
+
+        // Recalculate after scrolling settles
+        scrollTimer = setTimeout(() => {
+          const newRect = el.getBoundingClientRect()
+          let newTop = newRect.top + newRect.height / 2
+          let newLeft = newRect.left + newRect.width / 2
+
+          switch (currentStep.placement) {
+            case "top":
+              newTop = newRect.top - gap - panelHeight / 2
+              newLeft = newRect.left + newRect.width / 2
+              break
+            case "bottom":
+              newTop = newRect.bottom + gap + panelHeight / 2
+              newLeft = newRect.left + newRect.width / 2
+              break
+            case "left":
+              newTop = newRect.top + newRect.height / 2
+              newLeft = newRect.left - gap - panelWidth / 2
+              break
+            case "right":
+              newTop = newRect.top + newRect.height / 2
+              newLeft = newRect.right + gap + panelWidth / 2
+              break
+          }
+
+          if (newLeft < panelWidth / 2 + padding) newLeft = panelWidth / 2 + padding
+          if (newLeft > window.innerWidth - panelWidth / 2 - padding) newLeft = window.innerWidth - panelWidth / 2 - padding
+          if (newTop < panelHeight / 2 + padding) newTop = panelHeight / 2 + padding
+          if (newTop > window.innerHeight - panelHeight / 2 - padding) newTop = window.innerHeight - panelHeight / 2 - padding
+
+          setPosition({ top: newTop, left: newLeft, opacity: 1 })
+        }, 250)
+      } else if (attempts < 15) {
+        attempts++
+        timer = setTimeout(updatePosition, 100)
       } else {
-        // Fallback to center if element not found yet
         setPosition({
           top: window.innerHeight / 2,
           left: window.innerWidth / 2,
@@ -70,16 +109,14 @@ export function TourPanel() {
       }
     }
 
-    // Initial positioning
     updatePosition()
 
-    // Smooth transition
-    const timer = setTimeout(updatePosition, 300) // wait for scroll
     window.addEventListener("resize", updatePosition)
     window.addEventListener("scroll", updatePosition)
 
     return () => {
       clearTimeout(timer)
+      clearTimeout(scrollTimer)
       window.removeEventListener("resize", updatePosition)
       window.removeEventListener("scroll", updatePosition)
     }

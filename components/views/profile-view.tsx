@@ -17,7 +17,7 @@ export default function ProfileView({ quote }: ProfileViewProps) {
   const xpProgress = Math.min(100, Math.round(((stats.xp % 25) / 25) * 100));
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div data-tour="profile-view" className="space-y-8 animate-fade-in">
       <SectionHeader
         badge="FREELANCER PROFILE & STATS"
         title="Freelancer Performance"

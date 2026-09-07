@@ -97,7 +97,7 @@ export default function ProjectsView() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div data-tour="projects-view" className="space-y-8 animate-fade-in">
       <SectionHeader
         badge="DEAL EXECUTION"
         title="Active Projects"

@@ -13,6 +13,10 @@ export function SpotlightOverlay() {
       return
     }
 
+    let timer: ReturnType<typeof setTimeout>
+    let scrollTimer: ReturnType<typeof setTimeout>
+    let attempts = 0
+
     const updateSpotlight = () => {
       if (currentStep.targetSelector === "body" || currentStep.placement === "center") {
         setTargetRect(null)
@@ -21,24 +25,23 @@ export function SpotlightOverlay() {
 
       const el = document.querySelector(currentStep.targetSelector) as HTMLElement
       if (el) {
-        // Scroll into view if needed
-        const rect = el.getBoundingClientRect()
-        const isOutViewport = 
-          rect.top < 0 || 
-          rect.left < 0 || 
-          rect.bottom > (window.innerHeight || document.documentElement.clientHeight) || 
-          rect.right > (window.innerWidth || document.documentElement.clientWidth)
+        // Scroll into view
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
-        if (isOutViewport) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }
-
-        // Get computed style for border radius
         const style = window.getComputedStyle(el)
         const radius = parseInt(style.borderRadius) || 0
 
-        // After scrolling, recalculate the bounding rect
-        setTimeout(() => {
+        const rect = el.getBoundingClientRect()
+        setTargetRect({
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+          borderRadius: radius
+        })
+
+        // Recalculate after scrolling settles
+        scrollTimer = setTimeout(() => {
           const newRect = el.getBoundingClientRect()
           setTargetRect({
             top: newRect.top,
@@ -47,7 +50,10 @@ export function SpotlightOverlay() {
             height: newRect.height,
             borderRadius: radius
           })
-        }, 100) // Slight delay to wait for scrolling to begin settling
+        }, 250)
+      } else if (attempts < 15) {
+        attempts++
+        timer = setTimeout(updateSpotlight, 100)
       } else {
         setTargetRect(null)
       }
@@ -61,7 +67,7 @@ export function SpotlightOverlay() {
         const el = document.querySelector(currentStep.targetSelector)
         if (el) {
           const rect = el.getBoundingClientRect()
-          setTargetRect(prev => prev ? { ...prev, top: rect.top, left: rect.left } : null)
+          setTargetRect(prev => prev ? { ...prev, top: rect.top, left: rect.left, width: rect.width, height: rect.height } : null)
         }
       }
     }
@@ -70,6 +76,8 @@ export function SpotlightOverlay() {
     window.addEventListener("scroll", handleUpdate)
 
     return () => {
+      clearTimeout(timer)
+      clearTimeout(scrollTimer)
       window.removeEventListener("resize", handleUpdate)
       window.removeEventListener("scroll", handleUpdate)
     }
@@ -85,10 +93,8 @@ export function SpotlightOverlay() {
   }
 
   // Draw an SVG mask to create a "hole" in the overlay
-  // This allows clicks to pass through to the element below if we wanted (pointer-events-none)
-  // But we want to intercept clicks to prevent user interaction during the tour, so pointer-events-auto
   return (
-    <div className="fixed inset-0 z-[90] pointer-events-auto">
+    <div className="fixed inset-0 z-[90] pointer-events-none">
       <svg width="100%" height="100%" className="absolute inset-0 transition-all duration-500">
         <defs>
           <mask id="spotlight-mask">

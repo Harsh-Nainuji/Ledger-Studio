@@ -73,7 +73,7 @@ export default function PlaybookView({
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div data-tour="playbook-view" className="space-y-8 animate-fade-in">
       <SectionHeader
         badge="FREELANCE OPERATING SYSTEM"
         title="Freelance Playbook"

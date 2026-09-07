@@ -47,7 +47,7 @@ export default function DashboardView({
       />
 
       {/* Top Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div data-tour="dashboard-metrics" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <MetricCard
           label="Active Quote Total"
           value={formatCurrency(grandTotal, quote.currencyCode)}

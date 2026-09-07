@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTour } from './tour/tour-context';
 
 export default function WelcomeScreen() {
   const [visible, setVisible] = useState(true);
+  const { startTour } = useTour();
 
   useEffect(() => {
     const hasSeenWelcome = localStorage.getItem('ledger-studio-welcome-seen');
@@ -15,6 +17,14 @@ export default function WelcomeScreen() {
   const handleDismiss = () => {
     localStorage.setItem('ledger-studio-welcome-seen', 'true');
     setVisible(false);
+
+    const hasSeenTour = localStorage.getItem('ledger_has_seen_tour');
+    if (!hasSeenTour) {
+      // Slight delay so the modal fade-out finishes smoothly
+      setTimeout(() => {
+        startTour();
+      }, 300);
+    }
   };
 
   if (!visible) return null;

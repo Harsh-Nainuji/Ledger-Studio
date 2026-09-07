@@ -174,7 +174,7 @@ export default function QuoteGenerator() {
   }
 
   return (
-    <TourProvider>
+    <TourProvider onNavigate={setCurrentView}>
       <div className="min-h-screen bg-ledger-cream flex flex-col justify-between">
         <div>
         <WelcomeScreen />

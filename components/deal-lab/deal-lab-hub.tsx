@@ -30,7 +30,7 @@ export default function DealLabHub({
   );
 
   return (
-    <div className="space-y-6">
+    <div data-tour="deal-lab-hub" className="space-y-6">
       {/* Top Banner & Gamification Status Bar */}
       <div className="bg-ledger-text text-ledger-cream p-6 border-2 border-ledger-text flex flex-col md:flex-row md:items-center justify-between gap-4 font-mono">
         <div className="space-y-1">

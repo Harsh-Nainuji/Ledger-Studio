@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react"
 import { TOUR_STEPS, TourStep } from "./tour-config"
+import { ViewMode } from "../navigation/navbar"
 
 interface TourContextType {
   isActive: boolean
@@ -16,21 +17,27 @@ interface TourContextType {
 
 const TourContext = createContext<TourContextType | undefined>(undefined)
 
-export function TourProvider({ children }: { children: ReactNode }) {
+export function TourProvider({ 
+  children, 
+  onNavigate 
+}: { 
+  children: ReactNode
+  onNavigate?: (view: ViewMode) => void 
+}) {
   const [isActive, setIsActive] = useState(false)
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
+    const hasSeenWelcome = localStorage.getItem("ledger-studio-welcome-seen")
     const hasSeenTour = localStorage.getItem("ledger_has_seen_tour")
     
-    // Auto-start for first time users
-    if (!hasSeenTour) {
-      // Slight delay to allow UI to settle before starting tour
+    // Auto-start ONLY if welcome screen was already seen in a prior session
+    if (hasSeenWelcome && !hasSeenTour) {
       const timer = setTimeout(() => {
         setIsActive(true)
-      }, 1000)
+      }, 500)
       return () => clearTimeout(timer)
     }
   }, [])
@@ -39,17 +46,22 @@ export function TourProvider({ children }: { children: ReactNode }) {
     ? TOUR_STEPS[currentStepIndex] 
     : null
 
-  // Handle onEnter and onLeave triggers
+  // Handle page navigation, onEnter, and onLeave triggers
   useEffect(() => {
-    if (isActive && currentStep?.onEnter) {
-      currentStep.onEnter()
+    if (isActive && currentStep) {
+      if (currentStep.view && onNavigate) {
+        onNavigate(currentStep.view)
+      }
+      if (currentStep.onEnter) {
+        currentStep.onEnter()
+      }
     }
     return () => {
       if (isActive && currentStep?.onLeave) {
         currentStep.onLeave()
       }
     }
-  }, [isActive, currentStepIndex, currentStep])
+  }, [isActive, currentStepIndex, currentStep, onNavigate])
 
   const startTour = () => {
     setCurrentStepIndex(0)

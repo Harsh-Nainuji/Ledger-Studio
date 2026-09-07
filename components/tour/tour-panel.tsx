@@ -98,15 +98,15 @@ export function TourPanel() {
         pointerEvents: "auto",
       }}
     >
-      <div className="bg-white border border-slate-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+      <div className="bg-ledger-paper border-2 border-ledger-text shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/50">
-          <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-ledger-text/20 bg-ledger-warm/40">
+          <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-ledger-grey font-bold">
             Tour • Step {currentStepIndex + 1} of {totalSteps}
           </span>
           <button 
             onClick={skipTour}
-            className="text-slate-400 hover:text-slate-600 transition-colors rounded-sm hover:bg-slate-100 p-0.5"
+            className="text-ledger-grey hover:text-ledger-text transition-colors p-0.5"
             aria-label="Skip tour"
           >
             <X className="h-4 w-4" />
@@ -114,24 +114,24 @@ export function TourPanel() {
         </div>
 
         {/* Content */}
-        <div className="p-5">
-          <h3 className="font-serif text-lg font-medium text-slate-900 mb-2">
+        <div className="p-5 space-y-2">
+          <h3 className="font-serif text-xl font-bold text-ledger-text">
             {currentStep.title}
           </h3>
-          <p className="text-sm text-slate-600 leading-relaxed font-sans">
+          <p className="font-serif text-sm text-ledger-grey leading-relaxed">
             {currentStep.content}
           </p>
         </div>
 
         {/* Footer actions */}
-        <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-t border-slate-100">
+        <div className="flex items-center justify-between px-4 py-3 bg-ledger-warm/20 border-t border-ledger-text/20">
           <button
             onClick={prevStep}
             disabled={currentStepIndex === 0}
-            className={`flex items-center justify-center h-8 w-8 rounded transition-colors ${
+            className={`flex items-center justify-center h-8 w-8 border border-ledger-text transition-colors ${
               currentStepIndex === 0 
-                ? "text-slate-300 cursor-not-allowed" 
-                : "text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+                ? "text-ledger-grey/40 border-ledger-text/30 cursor-not-allowed" 
+                : "text-ledger-text hover:bg-ledger-warm bg-ledger-paper"
             }`}
             aria-label="Previous step"
           >
@@ -140,7 +140,7 @@ export function TourPanel() {
           
           <button
             onClick={nextStep}
-            className="flex items-center justify-center gap-1.5 h-8 px-4 bg-slate-900 text-white hover:bg-slate-800 transition-colors rounded shadow-sm text-xs font-mono tracking-wide uppercase font-semibold"
+            className="flex items-center justify-center gap-1.5 h-8 px-4 bg-ledger-text text-ledger-cream hover:bg-ledger-dark transition-colors text-[10px] font-mono tracking-[0.1em] uppercase border border-ledger-text font-bold"
           >
             {currentStep.actionLabel || "Next"}
             {!currentStep.actionLabel && <ChevronRight className="h-3.5 w-3.5" />}

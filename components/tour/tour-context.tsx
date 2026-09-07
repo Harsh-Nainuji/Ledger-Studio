@@ -91,8 +91,6 @@ export function TourProvider({ children }: { children: ReactNode }) {
     }
   }, [isActive])
 
-  if (!isMounted) return <>{children}</>
-
   return (
     <TourContext.Provider
       value={{
@@ -114,7 +112,16 @@ export function TourProvider({ children }: { children: ReactNode }) {
 export function useTour() {
   const context = useContext(TourContext)
   if (context === undefined) {
-    throw new Error("useTour must be used within a TourProvider")
+    return {
+      isActive: false,
+      currentStepIndex: 0,
+      currentStep: null,
+      startTour: () => {},
+      endTour: () => {},
+      nextStep: () => {},
+      prevStep: () => {},
+      skipTour: () => {},
+    }
   }
   return context
 }

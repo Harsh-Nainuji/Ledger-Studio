@@ -14,6 +14,9 @@ import ProfileView from './views/profile-view';
 import WelcomeScreen from './welcome-screen';
 import DataAudit from './data-audit';
 import Footer from './footer';
+import { TourProvider } from './tour/tour-context';
+import { SpotlightOverlay } from './tour/spotlight-overlay';
+import { TourPanel } from './tour/tour-panel';
 
 const DEFAULT_FREELANCER_SETTINGS: FreelancerSettings = {
   monthlySurvivalExpense: 4000,
@@ -171,8 +174,9 @@ export default function QuoteGenerator() {
   }
 
   return (
-    <div className="min-h-screen bg-ledger-cream flex flex-col justify-between">
-      <div>
+    <TourProvider>
+      <div className="min-h-screen bg-ledger-cream flex flex-col justify-between">
+        <div>
         <WelcomeScreen />
 
         {/* Master Navigation Bar Shell */}
@@ -263,6 +267,9 @@ export default function QuoteGenerator() {
 
       <DataAudit />
       <Footer />
+      <SpotlightOverlay />
+      <TourPanel />
     </div>
+    </TourProvider>
   );
 }

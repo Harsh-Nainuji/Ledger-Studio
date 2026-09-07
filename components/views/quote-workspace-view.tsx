@@ -96,7 +96,7 @@ export default function QuoteWorkspaceView({
             </div>
           </section>
 
-          <section id="parties-section" className="bg-ledger-paper p-6 border-2 border-ledger-text space-y-6">
+          <section id="parties-section" data-tour="client-section" className="bg-ledger-paper p-6 border-2 border-ledger-text space-y-6">
             <h3 className="font-serif text-2xl text-ledger-text font-bold">
               02. Parties
             </h3>
@@ -106,7 +106,7 @@ export default function QuoteWorkspaceView({
             </div>
           </section>
 
-          <section id="services-pricing" className="bg-ledger-paper p-6 border-2 border-ledger-text space-y-6">
+          <section id="services-pricing" data-tour="services-section" className="bg-ledger-paper p-6 border-2 border-ledger-text space-y-6">
             <h3 className="font-serif text-2xl text-ledger-text font-bold">
               03. Services & Line Items
             </h3>
@@ -143,7 +143,7 @@ export default function QuoteWorkspaceView({
             </div>
           </section>
 
-          <section id="payment-schedule" className="bg-ledger-paper p-6 border-2 border-ledger-text space-y-4">
+          <section id="payment-schedule" data-tour="payment-section" className="bg-ledger-paper p-6 border-2 border-ledger-text space-y-4">
             <h3 className="font-serif text-2xl text-ledger-text font-bold">
               04. Payment Schedule
             </h3>
@@ -157,7 +157,7 @@ export default function QuoteWorkspaceView({
             />
           </section>
 
-          <section id="scope-terms" className="bg-ledger-paper p-6 border-2 border-ledger-text space-y-4">
+          <section id="scope-terms" data-tour="scope-section" className="bg-ledger-paper p-6 border-2 border-ledger-text space-y-4">
             <h3 className="font-serif text-2xl text-ledger-text font-bold">
               05. Scope of Work & Terms
             </h3>
@@ -172,6 +172,7 @@ export default function QuoteWorkspaceView({
 
         {/* Right Column: Sticky Live Preview */}
         <div
+          data-tour="preview-section"
           className={`lg:col-span-5 lg:sticky lg:top-20 ${
             mobileTab === 'builder' ? 'hidden md:block' : 'block'
           }`}

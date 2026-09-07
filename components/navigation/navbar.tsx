@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTour } from '../tour/tour-context';
 
 export type ViewMode = 'dashboard' | 'quotes' | 'projects' | 'deal-lab' | 'playbook' | 'profile';
 
@@ -16,6 +17,7 @@ export default function Navbar({
   onNewDocument,
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { startTour } = useTour();
 
   const navItems: { id: ViewMode; label: string }[] = [
     { id: 'dashboard', label: 'Dashboard' },
@@ -43,7 +45,7 @@ export default function Navbar({
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.12em]">
+        <nav data-tour="navbar-views" className="hidden md:flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.12em]">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -61,6 +63,12 @@ export default function Navbar({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
+          <button
+            onClick={startTour}
+            className="hidden lg:block font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-text bg-ledger-warm px-4 py-2 hover:bg-slate-200 transition-colors border border-ledger-text"
+          >
+            Product Tour
+          </button>
           <button
             onClick={onNewDocument}
             className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-oxblood px-4 py-2 hover:bg-ledger-dark transition-colors border border-ledger-text"

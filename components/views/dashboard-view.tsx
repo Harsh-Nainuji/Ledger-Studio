@@ -94,7 +94,7 @@ export default function DashboardView({
           </button>
         </div>
 
-        <div className="border-2 border-ledger-text p-6 bg-ledger-paper space-y-3">
+        <div data-tour="deal-lab" className="border-2 border-ledger-text p-6 bg-ledger-paper space-y-3">
           <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-ledger-oxblood font-bold block">
             02. DIAGNOSTICS
           </span>

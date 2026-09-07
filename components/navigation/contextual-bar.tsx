@@ -20,7 +20,7 @@ export default function ContextualBar({
   const hiddenTasks = detectHiddenWork(quote);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 bg-ledger-text text-ledger-cream border-t-2 border-ledger-text p-3 shadow-lg">
+    <div data-tour="intelligence-bar" className="fixed bottom-0 left-0 right-0 z-30 bg-ledger-text text-ledger-cream border-t-2 border-ledger-text p-3 shadow-lg">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono text-xs">
         {/* Contextual Intelligence Summary Alerts */}
         <div className="flex items-center gap-4 overflow-x-auto">

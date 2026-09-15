@@ -1,4 +1,4 @@
-import { QuoteData, GamificationStats, GamificationAchievement } from './types';
+﻿import { QuoteData, GamificationStats, GamificationAchievement } from './types';
 import { validateMilestones } from './validateMilestones';
 import { runProposalXRay } from './xray-engine';
 
@@ -7,35 +7,35 @@ export const INITIAL_ACHIEVEMENTS: GamificationAchievement[] = [
     id: 'ach-scope-protector',
     title: 'Scope Protector',
     description: 'Set clear scope terms and revision limits on a proposal.',
-    icon: '🛡️',
+    icon: 'Shield',
     unlocked: false,
   },
   {
     id: 'ach-margin-defender',
     title: 'Margin Defender',
     description: 'Maintain an effective hourly rate above your minimum baseline.',
-    icon: '📈',
+    icon: 'TrendingUp',
     unlocked: false,
   },
   {
     id: 'ach-boundary-setter',
     title: 'Boundary Setter',
     description: 'Define client prerequisites and explicit milestone payments.',
-    icon: '📍',
+    icon: 'MapPin',
     unlocked: false,
   },
   {
     id: 'ach-deal-architect',
     title: 'Deal Architect',
     description: 'Achieve an X-Ray Health Score of 85+ on a proposal.',
-    icon: '🏗️',
+    icon: 'Building2',
     unlocked: false,
   },
   {
     id: 'ach-creep-survivor',
     title: 'Scope Creep Survivor',
     description: 'Complete a Scope Creep Simulation with a score above 80.',
-    icon: '⚡',
+    icon: 'Zap',
     unlocked: false,
   },
 ];

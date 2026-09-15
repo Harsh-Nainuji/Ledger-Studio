@@ -1,10 +1,20 @@
-'use client';
+﻿'use client';
 
 import SectionHeader from '../ui/section-header';
 import MetricCard from '../ui/metric-card';
 import { QuoteData } from '@/lib/types';
 import { calculateGamification } from '@/lib/deal-gamification';
 import { runProposalXRay } from '@/lib/xray-engine';
+import { formatCurrency } from '@/lib/quote-utils';
+import {
+  Shield,
+  TrendingUp,
+  MapPin,
+  Building2,
+  Zap,
+  CheckCircle2,
+  Lock,
+} from 'lucide-react';
 
 interface ProfileViewProps {
   quote: QuoteData;
@@ -15,6 +25,23 @@ export default function ProfileView({ quote }: ProfileViewProps) {
   const xray = runProposalXRay(quote);
 
   const xpProgress = Math.min(100, Math.round(((stats.xp % 25) / 25) * 100));
+
+  const renderBadgeIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'Shield':
+        return <Shield className="h-6 w-6 text-ledger-text" />;
+      case 'TrendingUp':
+        return <TrendingUp className="h-6 w-6 text-ledger-text" />;
+      case 'MapPin':
+        return <MapPin className="h-6 w-6 text-ledger-text" />;
+      case 'Building2':
+        return <Building2 className="h-6 w-6 text-ledger-text" />;
+      case 'Zap':
+        return <Zap className="h-6 w-6 text-ledger-text" />;
+      default:
+        return <Shield className="h-6 w-6 text-ledger-text" />;
+    }
+  };
 
   return (
     <div data-tour="profile-view" className="space-y-8 animate-fade-in">
@@ -76,7 +103,7 @@ export default function ProfileView({ quote }: ProfileViewProps) {
 
         <MetricCard
           label="Minimum Rate Protection"
-          value={quote.minimumHourlyRate > 0 ? `$${quote.minimumHourlyRate}/hr` : 'Not Set'}
+          value={quote.minimumHourlyRate > 0 ? `${formatCurrency(quote.minimumHourlyRate, quote.currencyCode)}/hr` : 'Not Set'}
           subtext="Survival Baseline Guard"
         />
       </div>
@@ -91,28 +118,32 @@ export default function ProfileView({ quote }: ProfileViewProps) {
           {stats.achievements.map((ach) => (
             <div
               key={ach.id}
-              className={`p-4 border-2 transition-all ${
+              className={`p-5 border-2 transition-all ${
                 ach.unlocked
                   ? 'bg-ledger-paper border-ledger-text text-ledger-text'
-                  : 'bg-ledger-cream border-ledger-grey/40 text-ledger-grey opacity-50'
+                  : 'bg-ledger-cream border-ledger-grey/40 text-ledger-grey opacity-60'
               }`}
             >
-              <div className="text-2xl mb-2">{ach.icon}</div>
+              <div className="mb-3">{renderBadgeIcon(ach.icon)}</div>
               <h4 className="font-serif text-lg font-bold text-ledger-text">
                 {ach.title}
               </h4>
               <p className="font-mono text-xs text-ledger-grey mt-1">
                 {ach.description}
               </p>
-              <span
-                className={`font-mono text-[9px] uppercase tracking-[0.1em] inline-block mt-3 px-2 py-0.5 border ${
-                  ach.unlocked
-                    ? 'bg-ledger-text text-ledger-cream border-ledger-text'
-                    : 'bg-ledger-grey/20 text-ledger-grey border-ledger-grey/30'
-                }`}
-              >
-                {ach.unlocked ? '✓ Unlocked' : 'Locked'}
-              </span>
+              <div className="mt-4 pt-3 border-t border-ledger-text/20 flex items-center gap-1.5">
+                {ach.unlocked ? (
+                  <span className="font-mono text-[9px] uppercase tracking-[0.1em] inline-flex items-center gap-1 px-2 py-0.5 bg-ledger-text text-ledger-cream border border-ledger-text font-bold">
+                    <CheckCircle2 className="h-3 w-3 text-emerald-400 shrink-0" />
+                    Unlocked
+                  </span>
+                ) : (
+                  <span className="font-mono text-[9px] uppercase tracking-[0.1em] inline-flex items-center gap-1 px-2 py-0.5 bg-ledger-grey/20 text-ledger-grey border border-ledger-grey/30">
+                    <Lock className="h-3 w-3 shrink-0" />
+                    Locked
+                  </span>
+                )}
+              </div>
             </div>
           ))}
         </div>

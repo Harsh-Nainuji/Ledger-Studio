@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { QuoteData, SenderInfo } from '@/lib/types';
 import SectionHeader from '../ui/section-header';
@@ -6,12 +6,14 @@ import MetricCard from '../ui/metric-card';
 import { calculateGrandTotal, formatCurrency, formatDate } from '@/lib/quote-utils';
 import { runProposalXRay } from '@/lib/xray-engine';
 import { ViewMode } from '../navigation/navbar';
+import { FolderPlus, ArrowRight } from 'lucide-react';
 
 interface DashboardViewProps {
   quote: QuoteData;
   senderInfo: SenderInfo;
   onNavigate: (view: ViewMode) => void;
   onNewDocument: () => void;
+  onConvertToProject?: () => void;
 }
 
 export default function DashboardView({
@@ -19,6 +21,7 @@ export default function DashboardView({
   senderInfo,
   onNavigate,
   onNewDocument,
+  onConvertToProject,
 }: DashboardViewProps) {
   const grandTotal = calculateGrandTotal(
     quote.lineItems,
@@ -37,12 +40,23 @@ export default function DashboardView({
         title="Dashboard"
         subtitle="Executive summary of your active deals, quote economics, and proposal diagnostics."
         action={
-          <button
-            onClick={onNewDocument}
-            className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-oxblood px-5 py-3 hover:bg-ledger-dark transition-colors border border-ledger-text font-bold"
-          >
-            + New Quote
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            {onConvertToProject && (
+              <button
+                onClick={onConvertToProject}
+                className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-text bg-ledger-warm px-4 py-3 hover:bg-white transition-colors border border-ledger-text font-bold inline-flex items-center gap-1.5"
+              >
+                <FolderPlus className="h-4 w-4" />
+                + Save as Project
+              </button>
+            )}
+            <button
+              onClick={onNewDocument}
+              className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-oxblood px-5 py-3 hover:bg-ledger-dark transition-colors border border-ledger-text font-bold"
+            >
+              + New Quote
+            </button>
+          </div>
         }
       />
 
@@ -88,9 +102,10 @@ export default function DashboardView({
           </p>
           <button
             onClick={() => onNavigate('quotes')}
-            className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-text px-4 py-2.5 hover:bg-ledger-dark transition-colors border border-ledger-text inline-block"
+            className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-text px-4 py-2.5 hover:bg-ledger-dark transition-colors border border-ledger-text inline-flex items-center gap-1.5 font-bold"
           >
-            Open Workspace →
+            <span>Open Workspace</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>
 
@@ -106,9 +121,10 @@ export default function DashboardView({
           </p>
           <button
             onClick={() => onNavigate('deal-lab')}
-            className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-oxblood px-4 py-2.5 hover:bg-ledger-dark transition-colors border border-ledger-text inline-block"
+            className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-cream bg-ledger-oxblood px-4 py-2.5 hover:bg-ledger-dark transition-colors border border-ledger-text inline-flex items-center gap-1.5 font-bold"
           >
-            Open Deal Lab →
+            <span>Open Deal Lab</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>
 
@@ -124,22 +140,34 @@ export default function DashboardView({
           </p>
           <button
             onClick={() => onNavigate('playbook')}
-            className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-text bg-ledger-warm px-4 py-2.5 hover:bg-white transition-colors border border-ledger-text inline-block font-bold"
+            className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-text bg-ledger-warm px-4 py-2.5 hover:bg-white transition-colors border border-ledger-text inline-flex items-center gap-1.5 font-bold"
           >
-            Open Playbook →
+            <span>Open Playbook</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
       {/* Active Quote Overview Table */}
       <div className="border-2 border-ledger-text bg-ledger-cream p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-ledger-text pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-ledger-text pb-4">
           <h3 className="font-serif text-2xl text-ledger-text font-bold">
             Active Proposal Details
           </h3>
-          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-grey">
-            Date: {formatDate(quote.date)}
-          </span>
+          <div className="flex items-center gap-3">
+            {onConvertToProject && (
+              <button
+                onClick={onConvertToProject}
+                className="font-mono text-[9px] uppercase tracking-[0.1em] bg-ledger-oxblood text-ledger-cream px-3 py-1.5 border border-ledger-text hover:bg-ledger-dark font-bold inline-flex items-center gap-1"
+              >
+                <FolderPlus className="h-3 w-3" />
+                + Convert to Project
+              </button>
+            )}
+            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ledger-grey">
+              Date: {formatDate(quote.date)}
+            </span>
+          </div>
         </div>
 
         <div className="font-mono text-xs space-y-2">

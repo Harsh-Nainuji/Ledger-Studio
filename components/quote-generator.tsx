@@ -1,14 +1,15 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { QuoteData, SenderInfo, ClientInfo, FreelancerSettings } from '@/lib/types';
 import { createEmptyQuote, calculateGrandTotal } from '@/lib/quote-utils';
 import { validateMilestones } from '@/lib/validateMilestones';
+import { convertQuoteToActiveProject } from '@/lib/project-utils';
 import Navbar, { ViewMode } from './navigation/navbar';
 import DashboardView from './views/dashboard-view';
 import QuoteWorkspaceView from './views/quote-workspace-view';
 import ProjectsView from './views/projects-view';
-import DealLabHub from './deal-lab/deal-lab-hub';
+import DealLabHub, { DealLabTab } from './deal-lab/deal-lab-hub';
 import PlaybookView from './views/playbook-view';
 import ProfileView from './views/profile-view';
 import WelcomeScreen from './welcome-screen';
@@ -17,6 +18,7 @@ import Footer from './footer';
 import { TourProvider } from './tour/tour-context';
 import { SpotlightOverlay } from './tour/spotlight-overlay';
 import { TourPanel } from './tour/tour-panel';
+import { FolderCheck, ArrowRight, X } from 'lucide-react';
 
 const DEFAULT_FREELANCER_SETTINGS: FreelancerSettings = {
   monthlySurvivalExpense: 4000,
@@ -25,7 +27,8 @@ const DEFAULT_FREELANCER_SETTINGS: FreelancerSettings = {
 
 export default function QuoteGenerator() {
   const [currentView, setCurrentView] = useState<ViewMode>('dashboard');
-  const [dealLabTab, setDealLabTab] = useState<'hidden-work' | 'xray' | 'simulator'>('hidden-work');
+  const [dealLabTab, setDealLabTab] = useState<DealLabTab>('hidden-work');
+  const [projectToast, setProjectToast] = useState<string | null>(null);
 
   const [quote, setQuote] = useState<QuoteData | null>(null);
   const [senderInfo, setSenderInfo] = useState<SenderInfo | null>(null);
@@ -154,7 +157,7 @@ export default function QuoteGenerator() {
     }
   };
 
-  const handleOpenDealLabTab = (tab: 'hidden-work' | 'xray' | 'simulator') => {
+  const handleOpenDealLabTab = (tab: DealLabTab) => {
     setDealLabTab(tab);
     setCurrentView('deal-lab');
   };
@@ -169,6 +172,16 @@ export default function QuoteGenerator() {
     }, 100);
   };
 
+  const handleConvertToProject = () => {
+    if (!quote) return;
+    const { project, isNew } = convertQuoteToActiveProject(quote);
+    setProjectToast(
+      isNew
+        ? `Added "${project.title}" to Active Projects!`
+        : `Updated "${project.title}" in Active Projects!`
+    );
+  };
+
   if (!quote || !senderInfo) {
     return <div className="font-mono text-sm text-ledger-text text-center py-20">Loading Ledger Studio...</div>;
   }
@@ -178,6 +191,36 @@ export default function QuoteGenerator() {
       <div className="min-h-screen bg-ledger-cream flex flex-col justify-between">
         <div>
         <WelcomeScreen />
+
+        {/* Project Conversion Success Toast */}
+        {projectToast && (
+          <div className="bg-ledger-text text-ledger-cream px-6 py-3 border-b-2 border-ledger-text fixed top-0 left-0 right-0 z-50 animate-in slide-in-from-top duration-300">
+            <div className="max-w-7xl mx-auto flex items-center justify-between font-mono text-xs gap-4">
+              <div className="flex items-center gap-2">
+                <FolderCheck className="h-4 w-4 text-emerald-400 shrink-0" />
+                <span className="font-bold">{projectToast}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    setProjectToast(null);
+                    setCurrentView('projects');
+                  }}
+                  className="bg-ledger-oxblood text-ledger-cream px-3 py-1 border border-ledger-cream hover:bg-ledger-dark transition-colors font-bold uppercase tracking-wider text-[10px] inline-flex items-center gap-1"
+                >
+                  <span>View in Projects</span>
+                  <ArrowRight className="h-3 w-3" />
+                </button>
+                <button
+                  onClick={() => setProjectToast(null)}
+                  className="text-ledger-grey hover:text-ledger-cream"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Master Navigation Bar Shell */}
         <Navbar
@@ -194,6 +237,7 @@ export default function QuoteGenerator() {
               senderInfo={senderInfo}
               onNavigate={setCurrentView}
               onNewDocument={() => setShowNewQuoteConfirm(true)}
+              onConvertToProject={handleConvertToProject}
             />
           )}
 
@@ -212,6 +256,7 @@ export default function QuoteGenerator() {
               onUpdateFreelancerSettings={setFreelancerSettings}
               onApplyBaselineRate={applyBaselineRate}
               onOpenDealLabTab={handleOpenDealLabTab}
+              onConvertToProject={handleConvertToProject}
             />
           )}
 
@@ -222,6 +267,7 @@ export default function QuoteGenerator() {
               quote={quote}
               onUpdateQuote={updateQuote}
               onNavigateToSection={handleNavigateToSection}
+              initialTab={dealLabTab}
             />
           )}
 

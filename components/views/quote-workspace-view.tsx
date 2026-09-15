@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { QuoteData, SenderInfo, ClientInfo, FreelancerSettings } from '@/lib/types';
@@ -15,6 +15,7 @@ import ScopeOfWorkEditor from '../forms/scope-of-work-editor';
 import LivePreview from '../preview/live-preview';
 import PreviewExportButton from '../preview/preview-export-button';
 import ContextualBar from '../navigation/contextual-bar';
+import { FolderPlus } from 'lucide-react';
 
 interface QuoteWorkspaceViewProps {
   quote: QuoteData;
@@ -30,6 +31,7 @@ interface QuoteWorkspaceViewProps {
   onUpdateFreelancerSettings: (settings: FreelancerSettings) => void;
   onApplyBaselineRate: () => void;
   onOpenDealLabTab: (tab: 'hidden-work' | 'xray' | 'simulator') => void;
+  onConvertToProject?: () => void;
 }
 
 export default function QuoteWorkspaceView({
@@ -46,6 +48,7 @@ export default function QuoteWorkspaceView({
   onUpdateFreelancerSettings,
   onApplyBaselineRate,
   onOpenDealLabTab,
+  onConvertToProject,
 }: QuoteWorkspaceViewProps) {
   const [mobileTab, setMobileTab] = useState<'builder' | 'preview'>('builder');
 
@@ -178,11 +181,23 @@ export default function QuoteWorkspaceView({
           }`}
         >
           <div className="bg-ledger-paper border-2 border-ledger-text p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-ledger-text pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-ledger-text pb-4">
               <h3 className="font-serif text-2xl text-ledger-text font-bold">
                 Live Document Preview
               </h3>
-              <PreviewExportButton quote={quote} senderInfo={senderInfo} />
+              <div className="flex items-center gap-2 flex-wrap">
+                {onConvertToProject && (
+                  <button
+                    onClick={onConvertToProject}
+                    title="Add this quote as an active project in your tracking hub"
+                    className="font-mono text-[9px] uppercase tracking-[0.1em] bg-ledger-oxblood text-ledger-cream px-3 py-2 border border-ledger-text hover:bg-ledger-dark transition-colors font-bold inline-flex items-center gap-1.5"
+                  >
+                    <FolderPlus className="h-3.5 w-3.5" />
+                    + Convert to Project
+                  </button>
+                )}
+                <PreviewExportButton quote={quote} senderInfo={senderInfo} />
+              </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -204,6 +219,7 @@ export default function QuoteWorkspaceView({
         quote={quote}
         senderInfo={senderInfo}
         onOpenDealLabTab={onOpenDealLabTab}
+        onConvertToProject={onConvertToProject}
       />
     </div>
   );

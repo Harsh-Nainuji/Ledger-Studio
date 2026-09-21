@@ -1,49 +1,64 @@
 # Ledger Studio
 
-> A privacy-first freelance workspace for creating quotes, understanding deal economics, and protecting project scope.
+> A freelance workspace for creating quotes, understanding pricing, and protecting project scope.
 
-**Live Demo:** [Add your deployed URL here]
+**Live Demo:** [Add your live demo URL here]
 
-Ledger Studio started from a simple problem:
+Ledger Studio started with a simple question:
 
-Most freelance quote builders are good at calculating:
+**Is the price of my freelance project actually sustainable for me?**
+
+Most quote builders are good at calculating:
 
 ```text
-quantity × rate = price
+Quantity × Rate = Price
 ```
 
-But that doesn't necessarily tell you whether the deal makes sense for the freelancer.
+But that only tells you what the client is paying.
 
-Ledger Studio is built around the idea that a proposal should be evaluated from both sides:
-
-**What does the client pay, and what does the deal actually mean for the freelancer?**
+Ledger Studio tries to make the freelancer side of the deal easier to understand too.
 
 ---
 
-## What It Does
+## What is Ledger Studio?
 
-Ledger Studio combines proposal creation with tools that help freelancers examine the economics and risks behind a deal.
+Ledger Studio is a browser-based freelance workspace for:
 
-### Freelancer Baseline
+* Creating professional quotes
+* Checking the economics of a deal
+* Finding work that may have been missed from the quote
+* Reviewing proposal risks
+* Testing scope-creep situations
+* Managing active projects
 
-Enter:
+The goal is not to tell freelancers what they *should* charge.
+
+The goal is to make the information behind a quote easier to see.
+
+---
+
+## Freelancer Baseline
+
+Ledger Studio has a **Freelancer Baseline** that lets you enter:
 
 * Monthly survival expenses
 * Desired working hours per month
 
-Ledger Studio calculates a personal **minimum hourly rate**.
+From this, the app calculates a personal **minimum hourly rate**.
 
-This is not a market-rate recommendation.
+This is not a market-rate calculator.
 
-It is simply a personal financial floor based on the information provided by the freelancer.
+It does not use an external database to tell you what your rate should be.
 
-If a proposal falls below that floor, Ledger Studio can flag it.
+It is simply a personal financial floor.
+
+If a quote falls below that floor, Ledger Studio can flag it.
 
 ---
 
-### Hidden Work Detector
+## Hidden Work Detector
 
-Freelance projects often contain work that isn't explicitly included in the quote.
+Freelance projects often contain work that doesn't appear clearly in the original quote.
 
 For example:
 
@@ -51,32 +66,37 @@ For example:
 Build website — 40 hours
 ```
 
-The actual project might also require:
+The actual project may also involve:
 
 * Testing
 * Deployment
 * Configuration
 * Analytics setup
-* SEO-related work
-* Revision work
+* SEO work
+* Revisions
+* Other supporting tasks
 
-Ledger Studio scans the quote description, scope of work, and terms using predefined rules and keywords.
+Ledger Studio has a **Hidden Work Detector** that checks the quote description, scope of work, and terms against predefined rules and keywords.
 
-If supporting work is detected, the freelancer can:
+When something is detected, you can:
 
-* **Add to Scope**
-* **Internal Task**
-* **Ignore**
+* Add it to the scope
+* Mark it as an internal task
+* Ignore it
 
-The detector is intentionally rule-based.
+### Important limitation
 
-It is **not an AI system that understands every possible hidden task**, so it can miss things or produce irrelevant matches.
+The detector is **rule-based**.
+
+It is not an AI system that understands every possible hidden task.
+
+Because of that, it can miss things or flag something that is not relevant.
 
 ---
 
 ## Proposal X-Ray
 
-The Proposal X-Ray performs a pre-flight check of a proposal across several areas, including:
+The **Proposal X-Ray** performs a pre-flight check of a proposal across areas such as:
 
 * Scope clarity
 * Revision protection
@@ -86,41 +106,39 @@ The Proposal X-Ray performs a pre-flight check of a proposal across several area
 * Supporting work
 * Pricing health
 
-It produces a health score and identifies areas that may need attention.
+It produces a proposal health score and points to sections that may need attention.
 
 ---
 
 ## Scope Creep Simulator
 
-The Scope Creep Simulator lets freelancers test how they might respond when a client asks for additional work.
+The **Scope Creep Simulator** lets you test how a project can change when a client asks for additional work.
 
-Scenarios can change:
+The simulation can change:
 
-* Project scope
-* Workload
+* Scope
+* Estimated workload
 * Price
-* Minimum rate
+* Effective economics
 
-The freelancer can choose responses such as:
+You can respond by:
 
-* Accept
-* Charge Extra
-* Swap Scope
-* Protect Scope
+* Accepting the change
+* Charging extra
+* Swapping existing scope
+* Protecting the original scope
 
-The goal isn't to predict how a real client will behave.
-
-It's a small simulation for thinking through scope decisions before they happen.
+It is a simple way to think through scope decisions before dealing with them on a real project.
 
 ---
 
 ## Quotes & Pricing
 
-Ledger Studio includes a complete quote builder with:
+The quote builder supports:
 
 * Freelancer / company information
 * Client information
-* Document metadata
+* Quote metadata
 * Dynamic line items
 * Quantities
 * Hourly or unit rates
@@ -131,37 +149,17 @@ Ledger Studio includes a complete quote builder with:
 * Scope of work
 * Terms and revision policies
 
-Line items, tax, discounts, totals, and milestone validation are calculated directly by the application. Payment milestones must total exactly **100%** before export.
+The application calculates line-item totals, subtotal, tax, discount, grand total, and effective hourly rate.
+
+Payment milestones are validated so that they add up to exactly **100%** before export.
 
 ---
 
-## Effective Hourly Rate
-
-Ledger Studio calculates the effective hourly rate of a proposal so the freelancer can see the relationship between:
-
-```text
-Project price
-     ↓
-Estimated workload
-     ↓
-Effective hourly rate
-```
-
-This can then be compared with the freelancer's personal baseline.
-
-The purpose is not to determine what someone *should* charge.
-
-It is to make the economics of an existing quote easier to see.
-
----
-
-## Proposal PDF
+## PDF Export
 
 Quotes can be previewed in real time and exported as PDF directly from the browser.
 
-PDF generation uses `@react-pdf/renderer`.
-
-No external PDF service is required.
+The PDF is generated on the client side using `@react-pdf/renderer`.
 
 ---
 
@@ -175,9 +173,9 @@ Projects can track:
 * Contract value
 * Start date
 * Due date
-* Project status
+* Current status
 
-Available statuses include:
+Available statuses:
 
 ```text
 In Progress
@@ -186,50 +184,41 @@ Completed
 Canceled
 ```
 
-Projects support the currency selected in the original quote.
-
 ---
 
-## Privacy & Architecture
+## Privacy
 
 Ledger Studio is designed to work locally in the browser.
 
-The core application does **not require**:
+The core workflow does not require:
 
-* An account
 * Login
+* An account
 * A backend database
 * Cloud storage
 * User tracking
 
-Quote data, freelancer settings, sender information, and projects are persisted using browser `localStorage`.
-
-This means the repository can be run locally without setting up a database or backend service.
+Quote data, freelancer settings, sender information, and projects are stored in browser `localStorage`.
 
 ---
 
 ## Tech Stack
 
-* **Next.js 16**
-* **React 19**
-* **Tailwind CSS v4**
-* **Lucide React**
-* **GSAP**
-* **@react-pdf/renderer**
+* Next.js 16
+* React 19
+* Tailwind CSS v4
+* Lucide React
+* GSAP
+* `@react-pdf/renderer`
 * Browser `localStorage`
 
-## The application uses the Next.js App Router and React state hooks for its core state management.
+---
 
 # Run Locally
 
 ## Requirements
 
-Make sure you have:
-
-* Node.js
-* npm
-
-installed on your machine.
+Make sure you have Node.js and npm installed.
 
 ## Clone the repository
 
@@ -253,7 +242,7 @@ npm install
 npm run dev
 ```
 
-Then open:
+Open:
 
 ```text
 http://localhost:3000
@@ -277,7 +266,7 @@ npm start
 
 # Project Structure
 
-The project is organized around the main freelance workflow:
+The main application is organized around the freelance workflow:
 
 ```text
 app/
@@ -287,7 +276,7 @@ deal-lab/
 lib/
 ```
 
-Some of the core logic lives in:
+Some of the main logic lives in:
 
 ```text
 lib/
@@ -300,97 +289,62 @@ lib/
 └── deal-gamification.ts
 ```
 
-The quote calculation utilities handle subtotals, taxes, discounts, quote numbers, and payment milestone validation.
-
-The Deal Intelligence modules handle hidden-work detection, proposal analysis, scope-creep scenarios, and the XP/achievement system.
-
 ---
 
 # Limitations
 
-Ledger Studio is intentionally not trying to solve every problem in freelancing.
+Ledger Studio is intentionally not trying to solve every freelancing problem.
 
-### The Freelancer Baseline is not a market-rate calculator
+### Freelancer Baseline
 
-A rate based on personal expenses does not tell you what a particular client or market will pay.
+A personal minimum rate does not tell you what a specific client or market will actually pay.
 
-### Hidden Work Detector is not AI
+### Hidden Work Detector
 
-It uses predefined rules and keywords.
+The detector relies on predefined rules and keywords, so it can miss relevant work or flag irrelevant work.
 
-That means it can:
+### Proposal Analysis
 
-* Miss relevant work
-* Flag irrelevant work
-* Depend heavily on how the scope is written
+A proposal can still be a bad deal even when the numbers look good.
 
-### Proposal health is not a guarantee
-
-A proposal can score well and still become a bad deal.
-
-Likewise, a proposal can have warnings and still be perfectly reasonable depending on the situation.
-
-The tools are intended to expose things worth reviewing, not make the decision for the freelancer.
+These tools are meant to make potential problems easier to notice, not make the decision for the freelancer.
 
 ---
 
-# Roadmap
-
-Planned improvements include:
-
-* Invoice generation from active projects
-* Expanded scope preset library
-* Additional offline PDF template styles
-
-These are future ideas rather than guarantees of upcoming releases.
-
----
-
-# Why I Built This
+# Why I Built It
 
 I built Ledger Studio because I wanted freelance proposals to answer more than:
 
 > "How much does this project cost?"
 
-I wanted them to also make it easier to answer:
+I also wanted them to make it easier to answer:
 
 > "What does this deal actually mean for me?"
 
-The project is intentionally deterministic in the areas where simple calculations are enough.
+A lot of the system is intentionally deterministic.
 
-Instead of trying to make an AI decide what a freelancer should charge, Ledger Studio uses the information the freelancer already knows and makes the economics, workload, and potential risks more visible.
-
----
-
-# License
-
-Add your chosen license here.
-
-If you want people to freely use, modify, and redistribute the project, consider adding an open-source license such as MIT.
-
-Without a license, publicly visible source code is **not automatically free for others to reuse**.
+Instead of having a model invent a price or tell the freelancer what they should charge, Ledger Studio uses information the freelancer already knows and makes the economics, workload, and proposal risks easier to see.
 
 ---
 
-## Screenshots / Demo
+## If You Find It Useful
 
-Add screenshots or a short demo video here.
+If you try Ledger Studio and find it useful:
 
-Recommended:
+⭐ **Star the repository**
 
-1. Dashboard
-2. Quote builder
-3. Freelancer Baseline
-4. Hidden Work Detector
-5. Proposal X-Ray
-6. Scope Creep Simulator
+And if you build something with it, I'd appreciate a mention.
+
+Feedback, issues, and suggestions are also welcome.
 
 ---
 
 ## Author
 
-**Harsh N**
+**Harsh Nainuji**
 
-* GitHub: https://github.com/Harsh-Nainuji
-* LinkedIn: https://www.linkedin.com/in/harshnainuji/
-* Website: https://www.atarico.dev
+GitHub: [Harsh-Nainuji](https://github.com/Harsh-Nainuji)
+
+LinkedIn: [Harsh Nainuji](https://www.linkedin.com/in/harsh-coding/)
+
+Website: [Atarico](https://www.atarico.dev)
